@@ -74,6 +74,7 @@ export const App = () => {
                     data-cy="FilterUser"
                     href="#/"
                     onClick={() => setFilterByOwner(user.name)}
+                    key={user.id}
                   >
                     {user.name}
                   </a>
@@ -148,6 +149,10 @@ export const App = () => {
                 data-cy="ResetAllButton"
                 href="#/"
                 className="button is-link is-outlined is-fullwidth"
+                onClick={() => {
+                  setFilterByOwner('All');
+                  setFilterByProductName('');
+                }}
               >
                 Reset all filters
               </a>
@@ -218,7 +223,7 @@ export const App = () => {
               <tbody>
                 {filteredProducts.map(product => {
                   return (
-                    <tr data-cy="Product">
+                    <tr data-cy="Product" key={product.id}>
                       <td className="has-text-weight-bold" data-cy="ProductId">
                         {product.id}
                       </td>
