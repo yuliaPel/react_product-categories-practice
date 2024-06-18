@@ -24,6 +24,8 @@ const products = productsFromServer.map(product => {
 export const App = () => {
   const [filterByOwner, setFilterByOwner] = useState('All');
   const [filterByProductName, setFilterByProductName] = useState('');
+  const [filterByCategory, setFilterByCategory] = useState([]);
+  const isFilterByCategory = filterByCategory.length !== 0;
 
   const getFiltereProduct = arrOfProducts => {
     let newProducts = [...products];
@@ -39,6 +41,12 @@ export const App = () => {
         newProduct.name
           .toLowerCase()
           .includes(filterByProductName.toLowerCase()),
+      );
+    }
+
+    if (isFilterByCategory) {
+      newProducts = newProducts.filter(product =>
+        filterByCategory.includes(product.category.title),
       );
     }
 
@@ -115,33 +123,34 @@ export const App = () => {
               <a
                 href="#/"
                 data-cy="AllCategories"
-                className="button is-success mr-6 is-outlined"
+                className={`button is-success mr-6 ${isFilterByCategory ? 'is-outlined' : ''}`}
+                onClick={() => setFilterByCategory([])}
               >
                 All
               </a>
 
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 1
-              </a>
-
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 2
-              </a>
-
-              <a
-                data-cy="Category"
-                className="button mr-2 my-1 is-info"
-                href="#/"
-              >
-                Category 3
-              </a>
-              <a data-cy="Category" className="button mr-2 my-1" href="#/">
-                Category 4
-              </a>
+              {categoriesFromServer.map(category => {
+                return (
+                  <a
+                    data-cy="Category"
+                    className={`button mr-2 my-1
+                      ${filterByCategory.includes(category.title) ? 'is-info' : ''}`}
+                    href="#/"
+                    onClick={() => {
+                      if (filterByCategory.includes(category.title)) {
+                        setFilterByCategory(prev =>
+                          prev.filter(item => item !== category.title),
+                        );
+                      } else {
+                        setFilterByCategory(prev => [...prev, category.title]);
+                      }
+                    }}
+                    key={category.id}
+                  >
+                    {category.title}
+                  </a>
+                );
+              })}
             </div>
 
             <div className="panel-block">
