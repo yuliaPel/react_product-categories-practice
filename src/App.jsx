@@ -1,5 +1,5 @@
 /* eslint-disable jsx-a11y/accessible-emoji */
-import React from 'react';
+import React, { useState } from 'react';
 import './App.scss';
 
 import usersFromServer from './api/users';
@@ -22,6 +22,18 @@ const products = productsFromServer.map(product => {
 });
 
 export const App = () => {
+  const [filterByOwner, setFilterByOwner] = useState('All');
+
+  const getFiltereProduct = arrOfProducts => {
+    if (filterByOwner === 'All') {
+      return arrOfProducts;
+    }
+
+    return arrOfProducts.filter(product => product.user.name === filterByOwner);
+  };
+
+  const filteredProducts = getFiltereProduct(products);
+
   return (
     <div className="section">
       <div className="container">
@@ -32,21 +44,27 @@ export const App = () => {
             <p className="panel-heading">Filters</p>
 
             <p className="panel-tabs has-text-weight-bold">
-              <a data-cy="FilterAllUsers" href="#/">
+              <a
+                className={`${filterByOwner === 'All' ? 'is-active' : ''}`}
+                data-cy="FilterAllUsers"
+                href="#/"
+                onClick={() => setFilterByOwner('All')}
+              >
                 All
               </a>
 
-              <a data-cy="FilterUser" href="#/">
-                User 1
-              </a>
-
-              <a data-cy="FilterUser" href="#/" className="is-active">
-                User 2
-              </a>
-
-              <a data-cy="FilterUser" href="#/">
-                User 3
-              </a>
+              {usersFromServer.map(user => {
+                return (
+                  <a
+                    className={`${filterByOwner === user.name ? 'is-active' : ''}`}
+                    data-cy="FilterUser"
+                    href="#/"
+                    onClick={() => setFilterByOwner(user.name)}
+                  >
+                    {user.name}
+                  </a>
+                );
+              })}
             </p>
 
             <div className="panel-block">
@@ -177,7 +195,7 @@ export const App = () => {
             </thead>
 
             <tbody>
-              {products.map(product => {
+              {filteredProducts.map(product => {
                 return (
                   <tr data-cy="Product">
                     <td className="has-text-weight-bold" data-cy="ProductId">
